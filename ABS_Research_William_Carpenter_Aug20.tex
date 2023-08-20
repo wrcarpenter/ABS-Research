@@ -1,0 +1,528 @@
+\documentclass[10.5pt]{article}
+\usepackage{fancyhdr}
+\usepackage{extramarks}
+\usepackage{dcolumn}
+\usepackage{amsthm}
+\usepackage{authblk}
+\usepackage{amsfonts}
+\usepackage{tikz}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1.0in]{geometry}
+\usepackage{amsmath, latexsym}
+\usepackage{amssymb}
+\usepackage{enumitem}
+\usepackage{float}
+\usepackage{comment}
+\usepackage{booktabs}
+\renewcommand{\baselinestretch}{1.15}
+\usepackage{subcaption}
+\usepackage{graphicx}
+\usepackage{breqn}
+\usepackage{mathtools}
+\usepackage{longtable}
+\DeclarePairedDelimiter\ceil{\lcseil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\newcommand{\minus}{\scalebox{0.5}[1.0]{$-$}}
+
+\begin{document}
+\title{Evaluating the Impacts of COVID-19 on \\ Consumer and Commercial Debt: \\ Evidence from Asset-Backed Security Data\footnote{Many thanks to the Princeton Economics Department for this opportunity, Professor Adrien Matray for his valuable advisory during the course of this project, and Oscar Torres-Reyna for his technical prowess with statistical software. Thanks also to Finsight for an excellent, accessible data platform. }}
+%\vspace{2em}
+\author{\textbf{William Carpenter\footnote{University email: wrc4@princeton.edu}}}
+\date{August 31\textsuperscript{st}, 2020}
+\maketitle 
+%\vspace{0.5em}
+\vspace{2.5em}
+\hline\hline 
+\begin{abstract}
+   This paper investigates the early impact of the COVID-19 pandemic on consumer and commercial debt by evaluating loan-level data provided by issuers of asset-backed securities (ABS) from 2017-2020. More specifically, empirical analysis focuses on two universes of ABS: auto loans, both prime and subprime, and commercial mortgage-backed securities (CMBS). `Loan distress' is the main variable of interest, derived from delinquencies, charge-offs, and/or repossessions. It is found that auto loan distress during the coronavirus period has largely been mitigated from notable spikes in loan modifications occurring during the onset of country-wide lock downs. These modifications during the pandemic are also shown to have been granted to more creditworthy borrowers, while significantly longer extension periods were only granted in the subprime loan pool. In contrast to auto loans, the virus period has had a profound effect on raising commercial property loan distress where modifications are not as commonplace. Some property types, particularly lodging and retail, are shown to be the major drivers of loan distress.  \\ \\
+    \\
+      \normalsize{\textbf{Keywords:} auto loan, subprime, commercial mortgage, delinquency, ABS, COVID-19} \\ 
+\end{abstract}
+\hline\hline
+\vspace{3.5em}
+\thispagestyle{empty}
+\newpage
+
+\section{Introduction}
+The momentous outbreak of the coronavirus in the United States has generated upheaval in immense realm of debt. Country-wide quarantine and lockdown protocols have pressured both businesses and individuals, causing sharp rises in unemployment and steep losses in earnings during Q2 and Q3 2020. With so much uncertainty about future economic conditions, concern for the stability of lending markets has been a popular topic amongst researchers. This paper aims to add to current literature surrounding the pandemic by focusing on analyzing developments in lending for auto and commercial property loans.
+
+Vehicles are some of the most popular non-financial assets owned by consumers across the country. Accordingly, auto lending comprises a major portion of consumer debt, which was roughly 9\% in 2019, compared to 68\% for mortgages, 11\% for student loans (11\%), and 7\% for credit card loans (Wang 2020). While other options exist for acquiring a vehicle, primarily cash or lease, loan financing accounted for more than half of vehicle sales by the end of 2019.\footnote{Wang (2020) also notes that by the end of Q4 of 2019, 116 million consumers total had taken out auto loans.}  The industry as a whole has been expanding rapidly since the Great Recession (2007-2009), with current outstanding debt totaling at a historical high of \$1.33 trillion.
+Commercial real estate loans are also an industry that has been burgeoning since the Great Recession. These agreements are a popular item for banks' portfolios and differ from residential mortgages by serving as loans for income-producing properties, such as offices and storage.\footnote{Commercial real estate loans were estimated to make up 22\% of banks' total loans in the United States (Demos 2020).}
+
+Before the pandemic, higher levels of auto debt year-after-year had already been under scrutiny with rising rates of delinquency and default while unemployment rates had been dropping since 2014.\footnote{It common historically that unemployment rates and adverse developments in auto debt were fairly correlated.} One major concern has been how credit quality of borrowers as shifted, with the term `subprime' used to refer to those with poor credit histories. The Federal Reserve Bank of Kansas City pointed out rising delinquencies for subprime borrowers in 2018 and emphasized potential risks to the financial sector in the event of an economic downturn if the trend continued. Immediately before the pandemic began to take form in the U.S., Buchwald (2020) noted in February that delinquencies overall were at record highs with loans +90 days delinquent composing 5\% of all outstanding debt. Commercial real estate, on the other hand, had been showing signs of healthy growth in early 2020. CBRE Group was one firm that had highlighted a very positive 2020 outlook for the industry in its yearly report from late 2019. However, the virus's sudden impact on consumer mobility, confidence, and spending has undermined the previous stability of these loans. With various quarantine policies in play, some businesses could have been completely closed for months since March. Moreover, with such concerns for auto loans in early 2020 and the pandemic presenting new challenges across the entire country, assessing the impact of the virus on borrowers in each market is where this paper aims to provide further insight. 
+
+Detailed analysis into the performance of both these lending markets under COVID-19 is enabled by SEC regulation AB-II for asset-backed securities markets (ABS). Both types of loans are commonly packaged into these securities and sold to investors, where underlying collateral would be the vehicles or property spaces.\footnote{The ABS industry originated in the 1980s, with auto loans being one of the first types of consumer debt to be securitized.} ABS as a fixed income product is generally intended to provide diversification benefits and added yield to a fixed income portfolio, but they can present large risks.\footnote{Notably, residential mortgage-backed securities (RMBS) created with loans from the subprime housing sector were a major cause of the Great Recession.} Enacted in late 2016, SEC regulation AB-II requires granular, loan-level information to be provided publicly by issuers of ABS on a monthly basis. For auto loans, ABS issuance can also be categorized into subprime or prime pools, which is explained in more detail in Section 3.1. Overall, this reporting presents an excellent opportunity to compare the status of loans during the pandemic to past periods. To do so, the main focus is to generate a measure for `loan distress' overtime, embodied by recordings of delinquencies, charge-offs, and/or repossessions within the relevant data.\footnote{Delinquency is a term used to describe a borrower who has failed to pay an outstanding debt and is commonly denoted as the days since a payment was due that has not been made. Write-offs and repossessions refer more specifically to auto loans and are described in detail in Section 3.1.} The relationship between this variable and the pandemic period, controlling for other factors, can then be evaluated. 
+
+Generally, this paper finds that loan distress within auto loans has not increased during the pandemic period, but instead, remains significantly lower compared to other periods. This result is theorized to be partly attributable to a dramatic increase in loan modifications, where grants for extensions and changes in APR will act to reduce delinquency levels. Modifications for auto loans are also investigated in detail and it is found that more creditworthy borrowers received some kind of loan modification during the coronavirus period than in the past for both prime and subprime samples. Creditworthiness in this case was identified through borrowers with lower payment to income ratios and higher credit scores. Subprime borrowers with higher loan to value ratios were also receiving modifications during the pandemic. Lengths of granted extensions was a specific aspect within modifications that were examined for both auto loans pools and significantly longer extension lengths during the COVID-19 period were found to be significant only for subprime borrowers. These results all beg the question of how flexible trustees of auto ABS can be with making adjustments to loans, especially with large waves of extensions. Eaglesham \& Brown (2020) point out that many auto loan securitizations can restrict lenders from making large changes to amounts owed or interest rates, which usually leaves short-term extensions as the only option. The effect of the pandemic on the likelihood distress within commercial property loans was substantial, in stark contrast to auto ABS. This distress is driven by retail and lodging-based property types, while other major property types did not exhibit any significant spike in delinquencies associated with COVID-19. Unlike auto loans, loan modifications are not a common occurrence within CMBS.
+
+The remainder of this paper is organized as follows: Section 2 discusses relevant literature, noting sources of data, methodologies, and key results. Section 3 provides a detailed description of the acquired loan-level data and how it was organized for the purposes of this paper's research. Section 4 describes econometric methodologies and variables that are used. Section 5 gives a comprehensive discussion of all relevant results and Section 6 offers concluding remarks. Additional sections are included to provide a list of literary references, figures, summary statistics, tables, an appendix with further details related to the sampled data.   
+
+\section{Related Literature}
+
+\subsection{Auto Loan Related}
+Heitfield \& Sabarwal (2003) analyze pool-level data provided by Moody's from 3.3 million subprime auto loans  to determine what affects default and prepayment rates. Using a competing risks model, modified to address aggregate pool performance, they investigate hazard functions related to loan age (seasoning), aggregate shocks, and lender types. They also seek to determine if the infamously high interest rates demanded by subprime lenders are adequate to potentially cover with the likelihood of default from their borrowers. No clear evidence is found that current market interest rates induce subprime loan prepayment, however, more seasoned loans have higher prepayment rates. Unemployment rates are found to influence default and loans with extremely high interest rates are not necessarily providing the greatest expected returns.
+
+Agarwal, Ambrose \& Chomsisengphet also aim to understand how different characteristics of auto loans relate to both default and prepayment rates. They were motivated by the growing prevalence of auto ABS where pricing strategies would need to have a strong understanding of these two occurrences. Similar to Heitfield \& Sabarwall (2003), they use a competing risks framework with proprietary data at the individual loan-level, mostly with originations in the New England region. In addition to considering typical loan characteristics, they propose a prepayment option premium, derived from comparing a borrower's current loan rate and the three-year treasury yield. They also estimate a depreciation schedule at the manufacturer-level to generate monthly loan-to-value (LTV) ratios. It is shown that lower FICO scores, higher loan-to-value ratios, rising unemployment, and a larger prepayment premium all significantly raise the probability of default. Interestingly, loans for economy vehicles are less likely to default. The likelihood of prepayment is affected by loans with new vehicles and higher credit scores, LTVs, prepayment premiums, monthly income, and unemployment rates.   
+
+An, Cordell, \& Tang (2020) focus on phenomena of lengthening terms for vehicle loans and how that influences loan performance. Loan terms for 6+ years are being increasingly commonplace and are thought to potentially help borrowers mitigate default by lowering their monthly payments by a considerable amount, however their study suggests the opposite. Using Equifax loan-level data, they find that default rates in longer term loans are multiple times higher than those that are shorter.\footnote{One specific comparison they make is between 5 yr. and 7 yr. loans. They find that default rates among 7 yr. loans is 3x higher than 5 yr.} They also emphasize that a borrowers with weaker credit backgrounds, i.e. higher risks of default, self-select into longer-term terms. This endogeneity is something that they address with an instrumental variables specification. Overall, they emphasize that investors, lenders, and others should be cognisant of risks associated with these relatively new increases in auto loan terms. 
+
+% Ghulan \& Hill (2017) also aim to understand how different characteristics of subprime lending relate to loan performance. Utilizing a sample of UK-based subprime auto loans they evaluate probability of default based on loan characteristics and borrower attributes such as martial status, residential status, and employment status. They emphasize their findings align with prevailing literature: Borrowers that are married with high income or steady employment are less likely to default. On the other hand, borrowers with less agreeable living conditions and/or in areas of high unemployment have higher default rates.  
+
+Klee \& Shin (2020) investigate the phenomena that creditors continue signal the quality of auto loans despite new SEC regulation meant to increase transparency and reduce ``lemons" in the marketplace.\footnote{The term `lemon' was coined in the auto market to describe a vehicle with any type of defect that impairs its value and performance.} Their methodology focuses on using `warehousing months' as a dependent variable, which measures how long a given auto loan will remain on a firm's books before being packaged into an ABS security issuance. Interestingly, this can range from a few months to several years. They use data for loans in ABS-EE filings from 2017 Q1 - 2019 Q1, which amounts to 89 ABS securities and about 5,930,000 unique loans. In their model specifications, considerations for made for the effects of auto recalls, `super sale' periods, and major car model changes. Longer warehousing time is generally found to coincide with better borrower characteristics, such as income verification. Their results indicate that asymmetric information is still prevalent in auto ABS market even with new regulations for more performance transparency.  
+
+\subsection{Commercial Property Loan Related}
+Furfine (2018) examines how new regulation under the Dodd-Frank Act, that requires securitization sponsors to retain a 5\% of the aggregate risk they securitize, impacts the underwriting of commercial property loans. He uses both agency and non-agency CMBS supplemental prospectus data for single-property loans within the United States, collected primarily from Bloomberg and merged with other information about property characteristics. This amounts to approximately 62,000 unique loans mostly from agency-backed deals. Employing a difference-in-difference methodology, he compares how loan characteristics changed before and after the introduction of new regulation in 2016. It is found that loans subject to these new risk retention requirements had higher interest rates and income to debt service ratios but lower loan to value ratios. This suggests that policy was successful in promoting the underwriting of safer loans, but there is a greater cost (higher interest rates) to the borrowers. 
+
+
+\section{Loan-Level Data}
+
+ABS data is obtained from Finsight, a firm which tracks and compiles monthly ABS-EE filings from public issuers directly from the SEC.\footnote{These filings adhere to SEC Regulation AB requirements, and loan-level technical specifications can be obtained from EDGAR ABS XML Technical Specification (2019).} Acquired data was then appended to form unbalanced panels of loan profiles ranging as far back as December 2016 for the earliest issuance. Figures are also included in Section 7.1 that depict how loans in each sample are distributed across the United States. Predictably, the largest numbers of loans come from some of the most populous states, namely California, Texas, New York, Florida, and Illinois. Summary statistics for each sample are presented in Section 8. For auto loans, it can be seen that average interest rates for subprime borrowers (19\%) are much higher than prime (7.52\%) and average subprime credit scores (575) are lower than prime (705). In both samples, the average original loan term is roughly 70 months, which calls some attention to An, Cordell, \& Tang (2020) that commented on how loan lengths had been growing beyond five years. It is also important to note that the percentage of used vehicles for prime loans is extremely high because the sample is sourced from CarMax ABS which is explained in more detail in the next section. Commercial property loans can be seen to have low average interest rates (4.71\%) and longer average terms (116 months) compared to auto loans. Average loan to value ratios are also somewhat low (53.4\%) providing more cushion against risk to the lender.\footnote{Lower LTV ratios imply a lender has more flexibility between the value of the pledged collateral and the loan amount. This will help mitigate risks associated with fluctuations in loan value.} The five major property types included as indicator variables also compose 79.8\% of the total sample size. 
+
+\subsection{Auto Loan Securities}
+
+Auto loan data is divided into two different universes: subprime and prime. A security considered subprime generally contains loans originated with borrowers that have poor credit histories, most commonly indicated by credit scores that are below or around 600.\footnote{Risks with subprime borrowers could be from a variety of factors: volatile income, few marketable assets, no employment or income verification, etc. Most rating agencies and researchers refer to low credit scores as a proxy for these kinds of risk.} The subprime sample is composed of 4 individual issuances from Drive Financial Trust, known for its `deep' subprime platform, amounting to roughly 235,000 individual loans in total.\footnote{Drive Financial is controlled by Grupo Santander (Fest 2020). `Deep' subprime refers generally to borrowers with no credit scores or a score less than 600.} On the other hand, prime securities are typically comprised of more reliable borrowers with credit scores that are 700 or above. The prime sample consists of approximately 346,000 individual loans within 4 separate issuances from CarMax Auto Owner Trust.
+
+Within the data, loans are tracked until one of the following events occurs: repayment in full (at maturity or prepaid), charge-off, replacement or repurchase, or a vehicle serving as collateral is marked as repossessed.\footnote{A `charge-off' refers to when a lender would declare that payments they were expecting to receive from a borrower are unlikely to be collected. This often occurs when a borrower has been extremely delinquent. Repossession refers to when a lender takes back possession of a vehicle serving as collateral for a loan. This can be a voluntary choice for the borrower if they cannot make the necessary payments or an involuntary demand on the behalf of the lender usually when a borrower is no longer creditworthy.} A particular loan can continue to be reported as delinquent within reporting after it has been charged-off or a vehicle has been repossessed, however, these subsequent observations are dropped from the sample. The first incidence of either of these two events is considered to indicate a borrower's default.. A similar treatment of auto loan performance data was utilized by Agarwal, Ambrose, \& Chomsisengphet (2008). Observations are also dropped if other relevant information is missing such as an obligor's credit score or geographic location. Missing credit scores are most prevalent within the subprime sample.
+
+Figures are provided in Section 7.2 and 7.3 that illustrate how loan distress and modifications have progressed overtime within each sample. Loan distress has the tendency to rise as time progresses but seems to be mitigated by loan modifications. Before the pandemic period, it appears that the trends in distress and modifications have a seasonal tendency, where sharp declines in distress usually occur at the end of each year. In both samples, it is quite clear that there has been a sizable spike in modifications during March and April. As of the most recent reporting period, the percentage of modified loans remains historically high but has already declined considerably from its recent peak. It appears that modifications are almost exclusively driven by loan extensions, especially within the prime loan pool, where changes in APR are virtually non-existent. The average length of loan modifications is also graphed and this measure shows a large increase in the subprime pool, while declining for the prime pool. Much of this observed activity in the data points back to the strict modification policies in auto ABS securitizations emphasized by Eaglesham \& Brown (2020). 
+
+\subsection{Commercial Mortgage-Backed Securities}
+
+Commercial mortgage-backed security (CMBS) data is obtained from non-agency issuance which encapsulates publicly shelved securities that are not backed by government agencies, such as Fannie Mae and Freddie Mac. Individual loans are given to a commercial property (or a portfolio of properties), with the value of the real estate as collateral and business cash flows used for determining the appropriate size of the loan. In contrast to auto ABS, which can begin with containing as many as 80,000 individual loans, CMBS securities usually contain 30-60 loans in total. Performance data from about 125 securities was collected with the most recent reporting period spanning from mid-June to mid-July.\footnote{Reporting periods for CMBS are not as standardized as auto loans and some securities can have reporting periods beginning and ending in the middle of months. All CMBS included did have reporting periods that ended in July. Auto loan reporting is kept month-to-month exclusively.}
+
+Due to inconsistencies on loan reporting for a portfolio of properties, the sample is trimmed to only include loans for individual commercial properties.\footnote{Inconsistencies arose primarily with how property values and operating income cash flows were being reported when the loan is for a portfolio of different properties rather than just one.} This approach was also implemented by Furfine (2018). Additional observations are also dropped when other independent variables (interest rate, state, etc.) are not specified. The final sample consists of approximately 5,680 individual loans. 
+
+A figure is included in Section 7.4 that illustrates commercial loan distress overtime and the marked rise beginning in March 2020. Lodging in particular seems to be responsible for majority of distress within the entire group, with retail also showing a sizable increase. On the other hand, distress for office and industrial spaces do not appear to show any notable jumps. 
+
+\section{Methodology}
+
+\subsection{Auto Loans: Evaluating Loan Distress \& Modifications}
+
+Three different regression models are utilized for auto ABS data to investigate the impact of COVID-19 and other loan characteristics on loan distress and modifications. With \textit{Loan Distress} as a dependent variable, a linear probability model is employed with specified fixed effects for loan, state, borrower, and vehicle characteristics. Given the panel nature of the data, robust standard errors are clustered at the loan-level address within entity correlations in every model. Concretely, the first model for auto loans is the following:  
+\begin{equation}
+    \text{P(\textit{Loan Distress} = 1)} = \beta_0 +
+    \beta_1(\textit{COVID-19}) +
+    \beta_2(\textit{Loan}) + \beta_3(\textit{Borrower}) + 
+    \beta_4(\textit{Vehicle}) + \alpha_i + \epsilon_{i,t}
+\end{equation}
+where: 
+\begin{itemize}[label=$-$, leftmargin=*]
+    \item \textbf{\text{Loan Distress}}: An indicator (dummy) variable marking loans during months in which they have one or more of the following statuses: $>=$ 30 days delinquent, charged-off, or the vehicle serving as collateral has been repossessed.\footnote{Note that defining a level of loan distress can vary, and seriously delinquent loans are often marked by lenders when they have become +90 days delinquent. Typically, loans are charged-off or vehicles are repossessed when loans have reached this level of extreme delinquency. Marking loans that were +60 days delinquent was also implemented and produced similar results (not shown).} 
+    \item \textbf{\text{COVID-19}}: An indicator variable marking the time-period March 2020 - July 2020 to evaluate the effect of the pandemic on the individual loans.\footnote{Redefining the period to be April 2020 - July 2020 was also evaluated and produced similar results (not shown).}
+    \item \textbf{\text{Loan}}: A vector of variables that control for various characteristics of the loan: interest rate, loan amount, original loan term, and remaining loan term. By including a loan's remaining term, loan origination date is effectively addressed in this way. This is considered a better control over explicitly having origination date, so that `loan seasoning' is considered in all model specifications.\footnote{Loans that are more `seasoned' would imply that they are relatively older than others in a given pool, which could imply that a borrower can manage their debt service well (Heitfield \& Sabarwal 2003). Moreover, it is typical that loans with a smaller remaining term are less likely to become delinquent or default.} Additionally, the natural log of loan amount is utilized within all regressions for ease of interpretation.  
+    \item \textbf{\text{Borrower}}: A vector of variables that control for various borrower characteristics: the presence of a co-obligor, loan to value (LTV), credit score, and payment to income. Loan to value is defined as: loan amount / vehicle value.\footnote{Vehicle value amounts for loans do not change as time progresses for the issuance of a security, i.e. they are static within the data.} 
+    \item \textbf{\text{Vehicle}}: An indicator variable indicating whether or not the vehicle serving as collateral is new or used. Additional variables relevant to other vehicle characteristics are included as fixed effects (see next line).
+    \item \textbf{\text{Fixed Effects ($\alpha_i$})}: Loan fixed effects (FE) control for various types of loan modifications that can occur: extension, APR adjustment, term adjustment, other (not specified) adjustment, or some kind of combination. Borrower fixed effects control for the obligor's location at the state level, income verification level, and employment verification level.\footnote{Borrower location was not provided in any more detail beyond the state-level. Also, note that the location of the obligor can extend beyond the United States mainland, into other regions such as Puerto Rico and the Virgin Islands as well as military territories such American Samoa. Note that very few loans preside in these additional regions.} Vehicle fixed effects control for vehicle type, vehicle model year, and the vehicle value source.\footnote{This variable can be one of the following: car, truck, SUV, motorcycle, other, or unknown. Almost all classifications fall under car, truck, or SUV.} Details about different types of verification and vehicle value sources are detailed in the Section 10.2 of the Appendix.
+\end{itemize}
+
+The next model utilizes a sub-sample of all modified auto loans to evaluate how characteristics of loans and borrowers seeking modifications was impacted by the pandemic. More specifically, an OLS model is employed with fixed effects. Formally, the specification is the following: 
+\begin{equation}
+    \textit{Loan/Borrower Characteristic} = \beta_0 +
+    \beta_1(\textit{COVID-19}) +
+    \beta_2(\textit{Loan}) + \beta_3(\textit{Borrower}) + 
+    \beta_4(\textit{Vehicle}) + \alpha_i + \epsilon_{i,t}
+\end{equation}
+The dependent variable can be one of four different variables that are commonly fixed at the loan origination: interest rate, payment to income, credit score, and loan to value.\footnote{The only factor that could potentially change over the life of the loan is the interest rate, but APR modifications are rare within each auto sample.} The other right-hand side variables are analogous to those from Equation (1). Considering that the number of modifications in both subprime and prime pools saw a rapid increase after March, it is expected that a larger demographic of borrowers could have been seeking modifications, especially those with better credit backgrounds.  
+
+The final model focuses even more specifically on loans that were granted extensions to assess if the COVID-19 period affected the duration of extensions. It is anticipated that given the uncertainty of the pandemic's effects and a large spike in extensions in both pools, that extensions will be significantly larger during the pandemic than in other periods. Similar to the previous model, an OLS regression is utilized with fixed effects:  
+\begin{equation}
+    \textit{Loan Extension} = \beta_0 +
+    \beta_1(\textit{COVID-19}) +
+    \beta_2(\textit{Loan}) + \beta_3(\textit{Borrower}) + 
+    \beta_4(\textit{Vehicle}) + \alpha_i + \epsilon_{i,t}
+\end{equation}
+\textit{Loan Extension} is measured in months. Again, the listed right-hand variables are the same as those described in Equation (1). 
+
+\subsection{Commercial Property Loans: Evaluating Loan Distress \& Property Types}
+
+Two LPM models are employed for commercial property loans to determine how distress is impacted by the pandemic and various property types. Defining \textit{Loan Distress} as the dependent differs slightly from auto loans, partly because delinquencies overall are more uncommon with commercial properties. With \textit{Loan Distress} as the dependent, the first model is shown below. Standard errors are robust and clustered at the loan level.   
+\begin{equation}
+    \text{P(\textit{Loan Distress} = 1)} = \beta_0 +
+    \beta_1(\textit{COVID-19}) +
+    \beta_2(\textit{Loan}) + \beta_3(\textit{Borrower}) +
+    \delta_t + \alpha_i + \epsilon_{i,t}
+\end{equation}
+where: 
+\begin{itemize}[label=$-$, leftmargin=*]
+    \item \textbf{\text{Loan Distress}}: An indicator variable marking loans as distressed if they have been marked as +30 days delinquent or late ($<$30 days delinquent but beyond a contractual grace period).\footnote{Loans within the CMBS reporting can also be marked as late, but still within a contractual grace period, and these are not considered to be distressed. This definition of distress differs slightly from auto loans because delinquencies beyond a grace period of far less common than in auto loans.}
+    \item \textbf{\text{COVID-19}}: An indicator variable marking the time-period March 2020 - July 2020 to evaluate the effect of the pandemic on the individual property loans.
+    \item \textbf{\text{Loan}}: A vector of variables that control for various characteristics of the loan: interest rate, loan amount, original loan term. The natural log of loan amount is utilized within all regressions for ease of interpretation.  
+    \item \textbf{\text{Borrower}}: A vector of variables that control for two characteristics of the commercial property: loan to value and operating income to debt service. Loan to value is defined as: loan amount / property value at securitization. Operating income to debt service is defined as: operating income securitization amount / scheduled debt service amount.\footnote{Cash flow to debt service is another provided ratio in reporting that was implemented and produced similar results (not shown).} 
+    \item \textbf{\text{Fixed Effects ($\delta_t$, $\alpha_i$})}: Loan fixed effects control for the origination quarter of each loan and state fixed effects control for the property's location at the state-level.\footnote{Exact locations of the CMBS properties are also reported and could potentially be useful for future research considerations interested in how different regions of the United States have performed.}
+\end{itemize}
+The second model used is identical to the first with the addition of interaction terms between \textit{COVID-19} and the major property types: lodging, retail, multifamily, office, and industrial.\footnote{Note that other property types are included in reporting such as warehousing, self-storage, mobile home park, etc. However, these other types of properties comprise a smaller portion overall of commercial loans ($\sim$20\%) and were elected to not be specified as individual dummies within the regression models. Nevertheless, they could certainly be included in future research or revisions.} It is defined as the following: 
+\begin{equation}
+    \text{P(\textit{Loan Distress} = 1)} = \beta_0 +
+    \beta_1(\textit{COVID-19}) +
+    \beta_2(\textit{Loan}) + \beta_3(\textit{Borrower}) + \beta_4(\textit{Interactions})
+    + \delta_t + \alpha_i + \epsilon_{i,t}
+\end{equation}
+Commercial properties can serve very different purposes, such as retail vs. industrial businesses, so it is expected that in the impact of COVID-19 will not be identical across these various types. For properties like office spaces, it is more likely that the pandemic did not have a marked impact.
+
+\section{Empirical Results} 
+
+\subsection{Auto Loans}
+Evaluating how the pandemic and other loan characteristics affected loan distress is shown Tables 4 \& 7 for subprime and prime auto loans, respectively. Examining first and foremost the impact of COVID-19 on loan distress, it is clear in both tables that distress is significantly lower overall. More specifically, referring to Column (6) within the subprime samples, a loan is -2.88\% less likely to be distressed if it is examined during the pandemic period. For the prime loan sample in Column (6), the likelihood is still negative but lower at -0.59\%. While these results do not carry substantial economic significance for decreased loan distress, they are highly statistically significant at the 1\% level and show that auto loan distress has not spiked since the onset of the pandemic for either sample. This insight was also somewhat clear visually from Figures 4 \& 6, where loan distress was depicted as predominantly declining since early 2020.  
+
+Other results related to loan characteristics in the model reveal intuitive outcomes to what was observed by Heitfield \& Sabarwal (2003) and Agarwal, Ambrose, \& Chomsisengphet (2008) when they examined determinants of loan default. Higher interest rates, loan amounts, original loan terms, and payment to income all increase probability of loan distress. This coincides the findings of An, Cordell, \& Tang (2020) that highlighted borrowers with longer terms were more prone to default. Loans with shorter remaining terms and co-obligors in each sample are less likely to be distressed. These results are expected considering that more seasoned loans imply that a borrower most likely has decent financial stability and the presence of a co-obligor can help to bolster and/or diversify income associated with making monthly payments. Having a used vehicle as collateral only significantly increases subprime loan distress but it is important to note that the prime loans only have a very small amount of new vehicles (CarMax is almost exclusively a used car loan retailer).
+
+Tables 5 \& 8 investigate how loan and borrower characteristics for loans that were modified were affected by the pandemic and results imply the period caused more creditworthy borrowers to be the subject of modifications. The COVID-19 dummy indicates that subprime and prime borrowers who received modifications during the period had payment to income ratios that were lower by 0.25 (-2.2\%) and 0.45 percentage points (-5.0\%), respectively. Credit scores for the modified loans were also higher in both groups by 3.36 pts. (+0.6\%) for subprime and 8.59 pts. (+1.3\%) for prime. For subprime borrowers alone, modified loans during the pandemic had higher loan to value ratios by 2.5 percentage points (+2.2\%), another indicator that often implies better creditworthiness.\footnote{Lenders will typically be more willing to offer a loans with higher LTV ratios if they believe the borrower is unlikely to default or the vehicle would be easy to repossess and sell. The latter could be less borrower-focused and more dependent on how the lender would perceive the market value of a vehicle to change or how quickly it depreciates in value.} On the other hand, modified loans during the pandemic period carried higher interest rates, by 0.30 percentage points (+1.5\%) for subprime and 0.11 (+1.0\%) for prime.\footnote{Note that stated percent increases included in parentheses are calculated in the following manner: $\Delta$DV / Mean of DV (DV = Dependent Variable).} It appears the most sizable changes in borrower demographic during the pandemic period was with monthly payment to income ratios.
+
+Focusing on a sub-sample of loans modified with extensions, Tables 6 \& 9 analyze how the length of extensions relates to pandemic and other loan characteristics also used in previous models. For subprime loans in Column (6), the COVID-19 dummy corresponds to extensions longer by 0.363 months (+19.0\%) holding other factors constant. Prime loans, on the other hand, did not show any significant relationship between the pandemic and extension length. Both result was suggested graphically in Figures 5 \& 7 where it was quite clear that modification length spiked for subprime loans and decreased substantially for prime loans. This provides some evidence that the prime loan pool has less flexibility overall with making accommodations to offer modifications relative to subprime, where payment issues with borrowers is likely even with favorable economic conditions.  
+
+\subsection{CMBS}
+
+Table 10 investigates how the pandemic period impacts loan distress in commercial properties, defined by through delinquencies in monthly reporting. The results shown empirically reflect the large spike in distress that can be seen in Figure 8. More specifically, referring to Column (5) the COVID-19 period corresponds to a commercial property loan being 9.93\% more likely to be distressed, a result that also controls for the major property types, loan origination, and geographic region. This result is highly economically significant and emphasizes how quickly the pandemic has caused unrest with many commercial businesses. Similar to auto loans, higher interest rates and loan amounts relate to higher distress, significant at the 1\% level. Higher loan to value (-3.1\%) and operating income to debt service (0.07\%) ratios reduce distress, with the latter being marginally significant at the 10\% level. By including dummy variables for property type in Columns (4) \& (5), it becomes apparent that lodging and retail are generally more prone to loan distress in the sample, increasing the likelihood of distress by 4.4\% and 1.2\%, respectively. The three remaining property types do not exhibit any significant association with loan distress.  
+
+Table 11 studies the relationship between loan distress, the pandemic, and property type more deeply by extending the model from Table 10 to include interactions between the COVID-19 dummy and the five main property types. The result for properties as lodging is undoubtedly the most profound: being a lodging-based property during the COVID-19 period increases likelihood of distress by 27.8\%. This echoes the massive spike in lodging loan distress shown in Figure 8. The interaction for retail properties is also significantly at the 1\% level but less sizable economically; it implies a 4.6\% increase in likelihood of distress. The pandemic interaction terms office and industrial are both negative, -2.4\% and 3.3\%, respectively. The interaction term with multifamily properties is also insignificant. This provides some evidence that not all properties were impacted adversely by the outbreak of the pandemic. 
+
+\section{Conclusion}
+
+The main objective of this paper was to provide empirical insight to the performance of consumer and commercial debt markets as a result of the pandemic. Using loan-level data from auto ABS and CMBS, it was shown that most loan distress is prominent within commercial loans, while borrowers for auto loans have received some considerable support from lenders in the form of modifications. An important question moving forward for both types of ABS will be how much more flexibility lenders can offer without encountering issues with making adjustments to loans within the securities. Limitations can be imposed that can often require investor approval to breach. 
+
+There are also many considerations that could help improve the methodologies and insights of this paper. By focusing on ABS issuance from Drive Financial and CarMax, the scope of auto loan performance was constrained to lender policies that could be unique to these securities. Various other issuers currently file ABS-EE data and so generating a larger, more heterogeneous sample for analysis could provide more reliable insight. Redefining what constitutes a `distressed loan' is an important piece of the methodology that could be altered. It is not uncommon for researchers to classify distressed or defaulted loans as those that have become +60 or +90 days delinquent. A linear probability model was also employed for much of the analysis, but a logit/probit model would most likely be more suitable for future research. Given that the pandemic continues to unfold moving into the fall of 2020, ample opportunity still exists for researchers to make improvements to the approaches within this paper and continue to study the effects of COVID-19 on consumer and commercial debt.
+ 
+
+
+
+\newpage
+\begin{thebibliography}{40}
+
+\bibitem{Agarwal}
+Agarwal, Ambrose, \& Chomsisengphet (2008) ``Determinants of Automobile Loan Default \& Prepayment," \textit{Economics Perspectives}, Vol. 32, No. 3. Federal Reserve Bank of Chicago. 
+
+\bibitem{Brown}
+Brown (2018) ``Auto Loan Delinquency Rates are Rising, but Mostly Among Subprime Borrowers," \textit{Main Street Views}, Federal Reserve Bank of Kansas City.
+
+\bibitem{CBRE}
+CBRE Group (2020) ``Commercial Real Estate Lending Maintains Strong Pace," \textit{Lending Figures Q4 2019.}
+
+\bibitem{Skin in the Game}
+Disalvo \& Johnston (2018) ``Banking Trends: Skin in the Game in the CMBS Market," Federal Reserve Bank of Philadelphia, Research Department.
+
+\bibitem{Wsj}
+Eaglesham \& Brown (2020) ``Auto-Lending Binge Threatens to Unwind When Stimulus Measures Ease," \textit{The Wall Street Journal.}
+
+\bibitem{Debt \& Credit}
+Federal Reserve Bank of New York (2020) ``Quarterly Report on Household and Credit," \textit{Research and Statistics Group}, Center for Microeconomic Data.
+
+\bibitem{Hill}
+Ghulam \& Hill (2017) ``Distinguishing between Good and Bad Subprime Auto Loan Borrowers: The Role of Demographic, Region, \& Loan Characteristics," Review of Economics & Finance, Better Advances Press, Canada, vol. 10, pages 49-62, November.
+
+\bibitem[Name]{Golsbee}
+Goolsbee \& Syverson (2020) ``Fear, Lockdown, and Diversion: Comparing Drivers of Pandemic Economic Decline 2020," \textit{Working Paper}, Becker Friedman Institute.
+
+\bibitem{Heitfield}
+Heitfield \& Saberwal (2004) ``What Drives Default and Prepayment on Subprime Auto Loans?" The Journal of Real Estate Finance and Economics 29, 457-477.
+
+\bibitem{Hudgens}
+Hudgens \& Mooney (2020) ``Corornavirus Jolts CMBS Pricing and 2020 Issuance Expectations," \textit{Market Intelligence}, S\&P Global.
+
+\bibitem{Klee}
+Klee \& Shin (2020) “Post-crisis Signals in Securitization: Evidence
+from Auto ABS,” Finance and Economics Discussion Series 2020-042. Washington: Board
+of Governors of the Federal Reserve System, https://doi.org/10.17016/FEDS.2020.042.
+
+\bibitem{Romero 2017}
+Romero (2017) ``Subprime Securitization Hits the Car Lot," Econ Focus, Third Quarter, pg. 12-15.
+
+\bibitem{XML}
+The Securities and Exchange Commission (2019) ``EDGAR ABS XML Technical Specification," Version 1.8. 
+
+\bibitem{Stock \& Watson}
+Stock \& Watson (2015) ``Introduction to Econometrics," \textit{Global Edition}, Updated Third Edition. Pearson Education Limited. 
+
+\bibitem{Wang}
+Wang (2020) ``Coronavirus and Auto Lending: A Market Outlook," \textit{Economic Impact of COVID-19,} Federal Reserve Bank of Richmond.
+
+\end{thebibliography}
+
+
+
+
+\newpage
+\section{Figures}
+
+\subsection{Loan Distributions by State}
+
+This section illustrates how loans for each ABS sample are distributed across the United States. Some CMBS loans are located outside of the United States (e.g. Cayman Islands) and are not shown. However, note that this is a very small number of loans within the sample. Scales are included in the bottom right of each figure. 
+
+\begin{figure}[H] 
+\caption{Subprime Auto Loan Locations by State}
+\centering 
+\includegraphics[width=11.0cm]{subprime_loans_by_state.PNG}
+\end{figure}
+
+\begin{figure}[H] 
+\caption{Prime Auto Loan Locations by State}
+\centering 
+\includegraphics[width=11.0cm]{prime_loans_by_state.PNG}
+\end{figure}
+\newpage 
+
+\begin{figure}[H] 
+\caption{CMBS Loans by State}
+\centering 
+\includegraphics[width=11.0cm]{cmbs_loans_by_state.PNG}
+\end{figure}
+\newpage 
+
+
+\subsection{Subprime Auto Loans: Visualizing Loan Distress and Modifications}
+
+In Figures 4 \& 6, the evolution of loan distress overtime is depicted for subprime and prime auto. Additionally, modification activity is overlaid with distress and broken down into its various types in Figures 5 and 7. The red dotted line in Figures 4 \& 6 represents the level of modified loans in the sample pools while it represents the average extension length in the pools in Figures 5 \& 7.
+
+\begin{figure}[H] 
+\caption{Average Subprime Loan Distress and Percent of Modified Loans (January 2018- June 2020)}
+\centering 
+\includegraphics[width=12.0cm]{subprime_delinquency.png}
+\end{figure}
+
+
+\begin{figure}[H] 
+\caption{Average Subprime Loan Modifications (January 2018- July 2020)}
+\centering 
+\includegraphics[width=12.0cm]{subprime_modifications.png}
+\end{figure}
+
+\subsection{Prime Auto Loans: Visualizing Loan Distress and Modifications}
+
+\begin{figure}[H] 
+\caption{Average Prime Loan Distress and Percent of Modified Loans (January 2018- June 2020)}
+\centering 
+\includegraphics[width=12.0cm]{prime_delinquency.png}
+\end{figure}
+
+\begin{figure}[H] 
+\caption{Average Prime Loan Modifications (January 2018- July 2020)}
+\centering 
+\includegraphics[width=12.0cm]{prime_modifications.png}
+\end{figure}
+
+\newpage
+\subsection{Commercial Property Loans: Visualizing Loan Distress}
+\begin{figure}[H] 
+\caption{Average Loan Distress for Commercial Property Loans (December 2016- June 2020)}
+\centering 
+\includegraphics[width=12.0cm]{delinquency.png}
+\end{figure}
+
+
+\newpage
+
+\section{Summary Statistics}
+\begin{table}[H]
+    \begin{center}
+  \caption{Summary Statistics for Subprime Auto Loans}
+    {\renewcommand\normalsize{\small}%
+    \small
+    \input{subprime_sumstats}}
+    \end{center}
+\end{table}
+
+\begin{table}[H]
+    \begin{center}
+  \caption{Summary Statistics for Prime Auto Loans}
+    {\renewcommand\normalsize{\small}%
+    \small
+    \input{prime_sumstats}}
+    \end{center}
+\end{table}
+
+\newpage
+\begin{table}[H]
+    \begin{center}
+  \caption{Summary Statistics for Commercial Property Loans}
+    {\renewcommand\normalsize{\small}%
+    \small
+    \input{cmbs_sumstats}}
+    \end{center}
+\end{table}
+
+
+\newpage
+
+\section{Regression Models}
+
+\subsection{Subprime Auto Loans}
+\begin{table}[H]
+    \begin{center}
+  \caption{Factors Impacting Distress in Subprime Auto Loans}
+    {\renewcommand\normalsize{\small}%
+    \footnotesize
+    \input{drive_estout}}
+    \label{subprimedistress}
+    \end{center}
+\end{table}
+\noindent\footnotesize{Robust standard errors clustered at the individual loan-level are included in parentheses. ***, **, * indicate statistical significance at the 1\%, 5\%, and 10\% level, respectively.}
+\newpage
+
+\begin{table}[H]
+    \begin{center}
+  \caption{Factors Impacting Loan Modifications in Subprime Auto Loans}
+    {\renewcommand\normalsize{\small}%
+    \footnotesize
+    \input{Matray1_estout}}
+    \end{center}
+    \label{tab:subprime_modification}
+\end{table}
+\noindent\footnotesize{Robust standard errors clustered at the individual loan-level are included in parentheses. ***, **, * indicate statistical significance at the 1\%, 5\%, and 10\% level, respectively.}
+\newpage
+
+% drive_modif_estout
+
+
+
+\begin{table}[H]
+    \begin{center}
+  \caption{Factors Impacting Loan Extensions in Subprime Auto Loans}
+    {\renewcommand\normalsize{\small}%
+    \footnotesize
+    \input{drive_extension_estout}}
+    \end{center}
+    \label{tab:subprime_extension}
+\end{table}
+\noindent\footnotesize{Robust standard errors clustered at the individual loan-level are included in parentheses. ***, **, * indicate statistical significance at the 1\%, 5\%, and 10\% level, respectively.}
+
+
+\subsection{Prime Auto Loans}
+\begin{table}[H]
+    \begin{center}
+  \caption{Factors Impacting Delinquency in Prime Auto Loans}
+    {\renewcommand\normalsize{\small}%
+    \footnotesize
+    \input{carmax_estout}}
+    \end{center}
+\end{table}
+\noindent\footnotesize{Robust standard errors clustered at the individual loan-level are included in parentheses. ***, **, * indicate statistical significance at the 1\%, 5\%, and 10\% level, respectively.}
+\newpage
+
+\begin{table}[H]
+    \begin{center}
+  \caption{Factors Impacting Delinquency in Prime Auto Loans}
+    {\renewcommand\normalsize{\small}%
+    \footnotesize
+    \input{carmax_modif_estout}}
+    \end{center}
+\end{table}
+\noindent\footnotesize{Robust standard errors clustered at the individual loan-level are included in parentheses. ***, **, * indicate statistical significance at the 1\%, 5\%, and 10\% level, respectively.}
+\newpage
+
+\begin{table}[H]
+    \begin{center}
+  \caption{Factors Impacting Delinquency in Prime Auto Loans}
+    {\renewcommand\normalsize{\small}%
+    \footnotesize
+    \input{carmax_extension_estout}}
+    \end{center}
+\end{table}
+\noindent\footnotesize{Robust standard errors clustered at the individual loan-level are included in parentheses. ***, **, * indicate statistical significance at the 1\%, 5\%, and 10\% level, respectively.}
+\newpage
+
+
+\subsection{Commercial Property Loans}
+
+\begin{table}[H]
+    \begin{center}
+  \caption{Factors Impacting Loan Distress Levels in CMBS Loans}
+    {\renewcommand\normalsize{\small}%
+    \footnotesize
+    \input{cmbs_estout}}
+    \end{center}
+\end{table}
+\noindent\footnotesize{Robust standard errors clustered at the individual loan-level are included in parentheses. ***, **, * indicate statistical significance at the 1\%, 5\%, and 10\% level, respectively.}
+\newpage
+
+\begin{table}[H]
+    \begin{center}
+  \caption{Factors Impacting Loan Distress Levels in CMBS Loans: Adding Interaction Terms}
+    {\renewcommand\normalsize{\small}%
+    \footnotesize
+    \input{cmbs_interaction_estout}}
+    \end{center}
+\end{table}
+\noindent\footnotesize{Robust standard errors clustered at the individual loan-level are included in parentheses. ***, **, * indicate statistical significance at the 1\%, 5\%, and 10\% level, respectively.}
+\newpage
+
+
+
+
+\section{Appendix}
+\subsection{Auto ABS Samples}
+Samples for auto loan-level data were obtained from the following groups of publicly-issued ABS:
+\begin{itemize} [label=$-$, leftmargin=*]
+    \item \textbf{Subprime Auto}: Drive Auto Receivables Trust 2017-1, 2018-1, 2019-1, 2020-1.
+    \item \textbf{Prime Auto}: CarMax Auto Receivables Trust 2017-1, 2018-1, 2019-1, 2020-1.
+\end{itemize}
+
+
+
+
+
+\subsection{Auto Loans: Borrower Verification \& Vehicle Value Sources}
+Note: Details are based on the SEC's EDGAR ABS XML Technical Specification (2020), Version 1.8. \\\\
+Income verification is recorded on the following scale:
+\begin{itemize} [label=$ $, leftmargin=*]
+    \item\textbf{1:} Not stated, not verified
+    \item\textbf{2:} Stated, not verified
+    \item\textbf{3:} Stated, not verified to ``level 4" or ``level 5"
+    \item\textbf{4:} Stated, ``level 4" verified*
+    \item\textbf{5:} Stated, ``level 5" verified**
+\end{itemize}
+*Level 4 Income Verification: Previous year W-2 or tax returns, and year-to-date pay stubs, if salaried. If self-employed, then obligor provided 2 years of tax returns. \\
+**Level 5 Income Verification: 24 months income verification (W-2s, pay stubs, bank statements, and/or tax returns). If self-employed, then obligor provided 2 years tax returns plus a CPA certification of tax returns. \\\\
+Employment verification is recorded on the following scale: 
+\begin{itemize} [label=$ $, leftmargin=*]
+    \item\textbf{1:} Not stated, not verified
+    \item\textbf{2:} Stated, not verified
+    \item\textbf{3:} Stated, ``level 3" verified***
+\end{itemize}
+***Level 3 Employment Verification: Direct independent verification with a third party of the obligor's current employment. \\\\
+Vehicle value source is recorded as one of the following:
+\begin{itemize} [label=$ $, leftmargin=*]
+    \item\textbf{1:} Invoice Price 
+    \item\textbf{2:} MSRP
+    \item\textbf{3:} Kelley Blue Book
+    \item\textbf{98:} Other
+\end{itemize}
+
+
+% \subsection{Summary Statistics for Auto ABS Modified Loans Sub-Samples}
+
+% \begin{table}[H]
+%     \begin{center}
+%   \caption{Modified Prime Loans (from Table 8)}
+%     {\renewcommand\normalsize{\small}%
+%     \small
+%     \input{prime_modif_sumstats}}
+%     \end{center}
+% \end{table}
+
+% \begin{table}[H]
+%     \begin{center}
+%   \caption{Extended Prime Loans (from Table 9)}
+%     {\renewcommand\normalsize{\small}%
+%     \small
+%     \input{prime_extend_sumstats}}
+%     \end{center}
+% \end{table}
+
+% \begin{table}[H]
+%     \begin{center}
+%   \caption{Modified Subprime Loans (from Table 5)}
+%     {\renewcommand\normalsize{\small}%
+%     \small
+%     \input{subprime_modif_sumstats}}
+%     \end{center}
+% \end{table}
+
+% \begin{table}[H]
+%     \begin{center}
+%   \caption{Extended Subprime Loans (from Table 6)}
+%     {\renewcommand\normalsize{\small}%
+%     \small
+%     \input{subprime_extend_sumstats}}
+%     \end{center}
+% \end{table}
+
+\end{document}
